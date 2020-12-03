@@ -5,7 +5,7 @@ function isValid(
   password: string,
 ) {
 	const chars = password.replace(new RegExp(`[^${letter}]`, 'g'), '');
-  return (chars.length >= start) && (chars.length <= end);
+	return (chars.length >= start) && (chars.length <= end);
 }
 
 async function main() {
