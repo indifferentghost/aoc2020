@@ -19,5 +19,3 @@ export async function main([slopeX, slopeY]: [number, number]): Promise<number> 
 }
 
 console.log(await main([1, 3]));
-
-export default {}
