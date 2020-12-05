@@ -1,12 +1,12 @@
 
-const expectedFields: Record<string, boolean> = {
-	byr: true,
-	iyr: true,
-	eyr: true,
-	hgt: true,
-	hcl: true,
-	ecl: true,
-	pid: true
+const expectedFields: Record<string, RegExp> = {
+	byr: /^(19[2-9]\d)|(200[0-2])$/,
+	iyr: /^20(1[0-9]|20)$/,
+	eyr: /^20(2[0-9]|30)$/,
+	hgt: /^(1([5-8]\d|9[0-3])cm)|(((59)|(6\d)|(7[0-6]))in)$/,
+	hcl: /^#[0-9a-f]{6}$/,
+	ecl: /amb|blu|brn|gry|grn|hzl|oth/,
+	pid: /^\d{9}$/
 }
 
 async function main() {
@@ -14,7 +14,7 @@ async function main() {
 		.readTextFile("./values.txt")
 		.then((v) => v.split("\n\n"));
 
-	const keys = Object.keys(expectedFields);
+	const entries = Object.entries(expectedFields);
 
 	const filteredValues = values
 		.map((v) => v.replace(/\s/g, '\n').split('\n'))
@@ -22,15 +22,16 @@ async function main() {
 
 	const parsedValues = filteredValues.map((v) => {
 		return v.reduce((memo, strV) => {
-			const [key] = strV.split(':');
-			memo[key] = true;
+			const [key, value] = strV.split(':');
+			memo[key] = value;
 			return memo;
-		}, {} as Record<string, boolean>);
+		}, {} as Record<string, string>);
 	});
 
 	return parsedValues.filter((v) => {
-		const bool = keys.every((k) => v[k]);
-		return bool;
+		return entries.every(([k, a]) => {
+			return a.test(v[k])
+		});
 	}).length;
 }
 
